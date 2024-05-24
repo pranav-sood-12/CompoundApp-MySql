@@ -1,7 +1,9 @@
 import ChemicalCompound from "../model/chemicalCompounds.model.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 export const addCompound = async(req,res) => {
-    const {CompoundName,CompoundDescription,strImageSource,strImageAttribution} = await req.body;
+    const {CompoundName,CompoundDescription,strImageAttribution} = await req.body;
+    const file = await req.files.strImageSource
     let compound = await ChemicalCompound.findOne({ where: { CompoundName: CompoundName } });
     if(compound)
     {
@@ -11,10 +13,15 @@ export const addCompound = async(req,res) => {
         })
     }
 
+    // console.log(file);
+
+    const cloudinaryResponse = await uploadOnCloudinary(file);
+    // console.log(cloudinaryResponse);
+
     compound = await ChemicalCompound.create({
         CompoundName:CompoundName,
         CompoundDescription:CompoundDescription,
-        strImageSource:strImageSource,
+        strImageSource:cloudinaryResponse.url,
         strImageAttribution:strImageAttribution
     }).catch((error)=>{
         console.log('user not added in table',error);
@@ -69,62 +76,67 @@ export const getAllCompound = async (req,res) => {
     })
 }
 
-export const updatedCompound = async (req,res) => {
-    const {CompoundName,CompoundDescription,strImageSource,strImageAttribution} = await req.body;
+export const updatedCompound = async (req, res) => {
+    const { CompoundName, CompoundDescription, strImageAttribution } = req.body;
+    const compoundID = req.params.id;
 
-    const compoundID = await req.params.id
+    try {
+        let currentCompound = await ChemicalCompound.findOne({ where: { id: compoundID } });
 
-    let currentCompound = await ChemicalCompound.findOne({ where: { id: compoundID } });
-    if(CompoundName == currentCompound.CompoundName)
-    {
-        let updatedCompound = await ChemicalCompound.update(
-            {
-                CompoundName:CompoundName,
-                CompoundDescription:CompoundDescription,
-                strImageSource:strImageSource,
-                strImageAttribution:strImageAttribution 
-            },
-            {
-                where: {
-                    CompoundName: CompoundName,
-                },
-            },
-        );
-        return res.status(201).json({
-            updatedCompound,
-            sucess : true,
-            message : "fetched successfully",
-        })
-    }
-    else{
-        let compound = await ChemicalCompound.findOne({ where: { CompoundName: CompoundName } });
-        if(compound)
-        {
-            return res.status(404).json({
-                sucess : false,
-                message : "compound exists",
-            })
+        let imageResponse;
+        // Check if the user has uploaded a new image
+        if (req.files && req.files.strImageSource) {
+
+            const file = req.files.strImageSource;
+            imageResponse = await uploadOnCloudinary(file);
+        } else {
+
+            imageResponse = currentCompound.strImageSource;
         }
 
-        let updatedCompound = await ChemicalCompound.update(
+        if (CompoundName !== currentCompound.CompoundName) {
+            const existingCompound = await ChemicalCompound.findOne({ where: { CompoundName } });
+            if (existingCompound) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Compound with this name already exists."
+                });
+            }
+        }
+        // console.log("file",imageResponse);
+
+        await ChemicalCompound.update(
             {
-                CompoundName:CompoundName,
-                CompoundDescription:CompoundDescription,
-                strImageSource:strImageSource,
-                strImageAttribution:strImageAttribution 
+                CompoundName,
+                CompoundDescription,
+                strImageSource: imageResponse.url,
+                strImageAttribution
             },
             {
-                where: {
-                    CompoundName: currentCompound.CompoundName,
-                },
-            },
+                where: { id: compoundID }
+            }
         );
-        return res.status(201).json({
-            updatedCompound,
-            sucess : true,
-            message : "fetched successfully",
-        })
+
+        return res.status(200).json({
+            success: true,
+            message: "Compound updated successfully.",
+            updatedCompound: {
+                id: compoundID,
+                CompoundName,
+                CompoundDescription,
+                strImageSource: imageResponse.url,
+                strImageAttribution
+            }
+        });
+    } catch (error) {
+        console.error("Error updating compound:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error."
+        });
     }
+
+
     
 
 }
