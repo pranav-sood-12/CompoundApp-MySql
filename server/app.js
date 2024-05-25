@@ -17,7 +17,8 @@ config({
 
 // CORS options
 const corsOptions = {
-  origin: 'http://localhost:4000',
+  origin: 'http://localhost:4200',
+  optionsSuccessStatus: 200,
   credentials: true,
   exposedHeaders: ['set-cookie'],
 };

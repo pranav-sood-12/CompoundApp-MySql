@@ -4,10 +4,13 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 export const addCompound = async(req,res) => {
     const {CompoundName,CompoundDescription,strImageAttribution} = await req.body;
     const file = await req.files.strImageSource
+    // console.log("hello",file);
     let compound = await ChemicalCompound.findOne({ where: { CompoundName: CompoundName } });
+    // console.log("compound",compound);
     if(compound)
     {
-        return res.status(500).json({
+        console.log("returned");
+        return res.status(400).json({
             sucess : false,
             message : "compound already exists",
         })
@@ -16,7 +19,7 @@ export const addCompound = async(req,res) => {
     // console.log(file);
 
     const cloudinaryResponse = await uploadOnCloudinary(file);
-    // console.log(cloudinaryResponse);
+    console.log("cloud",cloudinaryResponse);
 
     compound = await ChemicalCompound.create({
         CompoundName:CompoundName,
