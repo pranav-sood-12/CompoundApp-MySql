@@ -8,21 +8,21 @@
 
   <div
     *ngFor="let compound of compounds; index as i"
-    class="my-6 flex flex-col bg-white border border-gray-200 rounded-lg shadow md:flex-row hover:bg-gray-300 w-9/12"
+    class="my-6 flex flex-col bg-white border border-gray-200 rounded-lg shadow md:flex-row hover:bg-gray-300 w-full md:w-[90%]"
     (click)="openCompoundPage(compound)"
   >
     <div class="m-3 text-lg">{{ compound.id }}</div>
     <div class="w-full flex items-center">
       <img
-        class="object-cover w-[20%] rounded-t-lg h-96 md:h-auto md:rounded-none md:rounded-s-lg"
+        class="object-cover w-[20%] rounded-t-lg h-0 md:h-auto md:rounded-none md:rounded-s-lg"
         src="{{ compound.strImageSource }}"
         alt=""
       />
-      <div class="w-[80%] flex flex-col justify-between p-4 leading-normal">
-        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray">
+      <div class="w-[80%] flex flex-col justify-between p-2 md:p-4 leading-normal">
+        <h5 class="mb-2 text-3xl md:text-2xl font-bold tracking-tight text-gray">
           {{ compound.CompoundName }}
         </h5>
-        <p class="mb-3 font-normal text-gray-700 overflow-hidden whitespace-nowrap text-ellipsis w-[80%]">
+        <p class="mb-3 text-xl md:text-lg font-normal text-gray-700 overflow-hidden whitespace-nowrap text-ellipsis w-[80%]">
           {{ compound.CompoundDescription }}
         </p>
         <p class="underline mb-3 font-normal text-gray-700 text-sm hover:cursor-pointer w-fit">
@@ -31,11 +31,11 @@
         <button
           (click)="openUpdateComponent(compound)"
           type="submit"
-          class="w-[20%] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          class="w-[40%] md:w-[20%] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 md:px-5 py-2 md:py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
           Update
         </button>
-        <div class="my-4 text-grey-300">
+        <div class="my-4 text-grey-300 text-sm md:text-md">
           Last updated at : {{ compound.updatedAt | date : "dd/MM/yyyy" }}
         </div>
       </div>

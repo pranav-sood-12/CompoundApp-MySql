@@ -1,14 +1,14 @@
 <div class="flex flex-col justify-center items-center">
-    <h5 class="my-10 text-4xl font-bold tracking-tight text-gray">
+    <h5 class="my-10 text-2xl md:text-4xl font-bold tracking-tight text-gray">
         {{ compound.CompoundName }}
     </h5>
     <img
-        class="object-cover w-[30%] rounded-t-lg h-96 md:h-auto md:rounded-none md:rounded-s-lg"
+        class="object-cover w-[30%] rounded-t-lg h-auto md:rounded-none md:rounded-s-lg"
         src="{{ compound.strImageSource }}"
         alt=""
     />
 
-    <p class="m-10 font-normal text-gray-700 text-xl">
+    <p class="m-10 font-normal text-gray-700 text-md md:text-xl">
         {{ compound.CompoundDescription }}
     </p>
 </div>
