@@ -1,17 +1,24 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import {FormGroup, FormControl, ReactiveFormsModule} from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
-
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-create-compounds',
+  selector: 'app-update-compound',
   standalone: true,
-  imports: [ReactiveFormsModule,HttpClientModule],
-  templateUrl: './create-compounds.component.html',
-  styleUrl: './create-compounds.component.css'
+  imports: [CommonModule,ReactiveFormsModule,HttpClientModule],
+  templateUrl: './update-compound.component.html',
+  styleUrl: './update-compound.component.css'
 })
-export class CreateCompoundsComponent {
+export class UpdateCompoundComponent implements OnInit{
+  // compound: any;
+  id: string | null = null;
+  compound: any = [];
+
+  constructor(private router: Router,private route: ActivatedRoute,private http: HttpClient) {}
+
   profileForm = new FormGroup({
     CompoundName: new FormControl(''),
     CompoundDescription: new FormControl(''),
@@ -19,7 +26,28 @@ export class CreateCompoundsComponent {
     strImageAttribution: new FormControl(null)
   });
 
-  constructor(private http: HttpClient,private router: Router) {}
+  ngOnInit(): void {
+    this.id = this.route.snapshot.paramMap.get('id');
+    console.log(this.id);
+    this.fetchCompounds();
+    
+    console.log(this.compound);
+  }
+
+  fetchCompounds() {
+    this.http.get(`http://localhost:4000/api/compound/info/${this.id}`).subscribe(
+      (response: any) => {
+        console.log(response);
+        
+        this.compound = response.compound;
+        
+        console.log('Compounds fetched successfully:', this.compound);
+      },
+      (error) => {
+        console.error('Error fetching compounds:', error);
+      }
+    );
+  }
 
   onFileChangeSource(event: any) {
     const file = event.target.files[0];
@@ -40,6 +68,7 @@ export class CreateCompoundsComponent {
   }
 
   onSubmit() {
+
     const formData = new FormData();
     const compoundName = this.profileForm.get('CompoundName')?.value || '';
     const compoundDescription = this.profileForm.get('CompoundDescription')?.value || '';
@@ -58,26 +87,25 @@ export class CreateCompoundsComponent {
       formData.append('strImageAttribution', strImageAttribution);
     }
 
-    console.log(formData);
-    
-
-    this.http.post('http://localhost:4000/api/compound/new', formData).subscribe(
+    this.http.put(`http://localhost:4000/api/compound/update/${this.compound.id}`, formData).subscribe(
       (response: any) => {
         if (response.success) {
-          window.alert('Compound created')
+          console.log('updated');
+          window.alert('compound updated');
           this.router.navigateByUrl('');
         } else {
-          window.alert(response.message || 'Failed to create compound');
+          window.alert(response.message || 'Failed to update the compound');
         }
       },
       error => {
-        if (error.status === 400 && error.error.message === 'compound already exists') {
-          window.alert('Compound already exists');
+        if (error.status === 400) {
+          window.alert('Compound name already exists ... choose different compound name');
         } else {
-          console.error('Error adding compound:', error);
-          window.alert('An error occurred while adding the compound');
+          console.error('Error updating compound:', error);
+          window.alert('An error occurred while updating the compound');
         }
       }
     );
   }
+
 }

@@ -1,4 +1,5 @@
-<h2 class="text-4xl font-bold dark:text-black text-center my-8">Create Chemical Compound</h2>
+<h2 class="text-4xl font-bold dark:text-black text-center my-8">Update Chemical Compound</h2>
+
 <form
   [formGroup]="profileForm"
   (ngSubmit)="onSubmit()"
@@ -15,6 +16,7 @@
       type="text"
       formControlName="CompoundName"
       placeholder="Compound Name"
+      [(ngModel)]="compound.CompoundName"
       class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
     />
   </div>
@@ -29,6 +31,7 @@
       type="text"
       formControlName="CompoundDescription"
       placeholder="Compound Description"
+      [(ngModel)]="compound.CompoundDescription"
       class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
     />
   </div>
@@ -46,7 +49,7 @@
       aria-describedby="user_avatar_help"
     />
     <div class="mt-1 text-sm text-gray-500" id="user_avatar_help">
-      Upload photo of compound
+      Upload to change the compound picture
     </div>
   </div>
   <div class="mb-5">

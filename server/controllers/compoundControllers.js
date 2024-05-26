@@ -1,4 +1,5 @@
 import ChemicalCompound from "../model/chemicalCompounds.model.js";
+import ApiFeatures from "../utils/ApiFeatures.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 export const addCompound = async(req,res) => {
@@ -62,21 +63,23 @@ export const getCompound = async (req,res) => {
 }
 
 export const getAllCompound = async (req,res) => {
-    let compound = await ChemicalCompound.findAll();
+    try {
+        const resultPerPage = 5;
+        const numberOfCompounds = await ChemicalCompound.count();
 
-    if(!compound)
-    {
-        return res.status(404).json({
-            sucess : false,
-            message : "compound not fetched",
-        })
+        const apiFeatures = new ApiFeatures(ChemicalCompound.findAll(), req.query).pagination(resultPerPage);
+
+        let compounds = await ChemicalCompound.findAll(apiFeatures.query);
+
+        res.status(200).json({
+            success: true,
+            compounds,
+            numberOfCompounds,
+            resultPerPage
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
     }
-
-    return res.status(201).json({
-        compound,
-        sucess : true,
-        message : "fetched successfully",
-    })
 }
 
 export const updatedCompound = async (req, res) => {

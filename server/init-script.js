@@ -5,12 +5,12 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 import csv from 'csv-parser'
 
-// Function to check if initialization is required
+
 const isInitializationRequired = async () => {
     try {
-      // Check if there are any records in the database
+
       const count = await ChemicalCompound.count();
-      return count === 0; // Initialization is required if no records exist
+      return count === 0;
     } catch (error) {
       console.error('Error checking database records:', error);
       return false;
@@ -18,7 +18,7 @@ const isInitializationRequired = async () => {
 };
 
 
-// Function to initialize the database
+
 const initializeDatabase = async () => {
     try {
       const initializationRequired = await isInitializationRequired();
@@ -34,7 +34,7 @@ const initializeDatabase = async () => {
         fs.createReadStream(csvFilePath, { encoding: 'utf8' })
           .pipe(csv())
           .on('data', async (data) => {
-            // Insert each row into the database
+            
             await ChemicalCompound.create({
               id: data.id,
               CompoundName: data.CompoundName,
@@ -59,5 +59,5 @@ const initializeDatabase = async () => {
     }
   };
   
-  // Call the initialization function
+  
 initializeDatabase();
